@@ -49,7 +49,7 @@ const About = () => {
               <div className="relative">
                 {/* 时间线上的发光小圆点 */}
                 <div className="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></div>
-                <span className="text-[10px] font-mono bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded">2021 - 2024</span>
+                <span className="text-[10px] font-mono bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded">2020 - 2022</span>
                 <h4 className="text-base font-semibold text-white font-sans mt-2">
                   Bachelor of Information Technology (HONS)
                 </h4>

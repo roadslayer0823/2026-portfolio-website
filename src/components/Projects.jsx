@@ -12,8 +12,8 @@ const Projects = () => {
   const [hoveredProject, setHoveredProject] = useState(null);
   const [activeEtiTab, setActiveEtiTab] = useState(0); 
   const videoRefs = useRef({});
-  // 新增：专门给移动端背景模糊层单独管理的引用
   const bgVideoRefs = useRef({});
+  const swiperRef = useRef(null);
 
   const projects = [
     {
@@ -104,7 +104,7 @@ const Projects = () => {
       title: 'SoulWave AI Voice Sandbox',
       subtitle: 'Interactive Systems & AI Engineer',
       category: 'AI Engineering',
-      isMobile: true, // 📱 标记为竖屏移动端应用
+      isMobile: true,
       description: 'A Unity-based core application architected to orchestrate GenAI Text-to-Speech (TTS) and advanced Voice Cloning capabilities via the ElevenLabs REST API. Features multi-source input data pipelines and real-time audio visualization rendering.',
       keyAchievements: [
         'AI API Orchestration: Constructed robust backend pipelines for seamless asynchronous TTS generation and high-fidelity Voice Cloning.',
@@ -134,7 +134,7 @@ const Projects = () => {
       title: 'AI-Driven Smart Travel Planner',
       subtitle: 'Mobile Systems & API Engineer',
       category: 'Mobile Systems',
-      isMobile: true, // 📱 标记为竖屏移动端应用
+      isMobile: true,
       description: 'A high-performance Flutter mobile application engineered to modernize personal itinerary planning. Implements a decoupled Provider reactive pipeline to orchestrate multi-modal geospatial routing matrices and dynamic vector expense aggregations.',
       keyAchievements: [
         'Decoupled State Pipeline: Utilized Provider architecture to isolate heavy business logic, executing fine-grained Consumer re-rendering.',
@@ -158,25 +158,12 @@ const Projects = () => {
       targetVideo.play().catch(err => console.log('Main video sync skipped:', err));
     }
 
-    // 联动同步播放背景模糊视频层
     const bgVideo = bgVideoRefs.current[projectId];
     if (bgVideo) {
       if (bgVideo.src !== window.location.origin + explicitVideoUrl) {
         bgVideo.load();
       }
       bgVideo.play().catch(err => console.log('Background video sync skipped:', err));
-    }
-  };
-
-  const handleMouseLeave = (projectId) => {
-    setHoveredProject(null);
-    if (videoRefs.current[projectId]) {
-      videoRefs.current[projectId].pause();
-      videoRefs.current[projectId].currentTime = 0;
-    }
-    if (bgVideoRefs.current[projectId]) {
-      bgVideoRefs.current[projectId].pause();
-      bgVideoRefs.current[projectId].currentTime = 0;
     }
   };
 
@@ -215,6 +202,7 @@ const Projects = () => {
             grabCursor={true}
             centeredSlides={true}
             loop={true}
+            loopPreventsSlide={true}
             observer={true}
             observeParents={true}
             resizeObserver={true}
@@ -222,6 +210,7 @@ const Projects = () => {
             noSwipingClass="swiper-no-swiping"
             touchStartPreventDefault={false}
             onInit={(swiper) => {
+              swiperRef.current = swiper;
               setTimeout(() => {
                 if (swiper && !swiper.destroyed) {
                   swiper.update();
@@ -237,43 +226,44 @@ const Projects = () => {
               modifier: 1,
               slideShadows: false,
             }}
-            pagination={{ clickable: true, el: '.swiper-custom-pagination' }}
+            pagination={{ clickable: false, el: '.swiper-custom-pagination' }}
             navigation={true}
             breakpoints={{
               768: { slidesPerView: 1.8, spaceBetween: 30 },
               1024: { slidesPerView: 2.5, spaceBetween: 40 },
               1400: { slidesPerView: 3, spaceBetween: 40 },
             }}
+            onSlideChange={(swiper) => {
+              const realIndex = swiper.realIndex;
+              const activeProject = projects[realIndex];
+              
+              setActiveEtiTab(0);
+              
+              const currentMedia = getMediaDetails(activeProject);
+              handleMouseEnter(activeProject.id, currentMedia.videoUrl);
+            }}
             className="!pb-16 !px-4"
           >
-            {projects.map((project) => {
+            {projects.map((project, index) => {
               const currentMedia = getMediaDetails(project);
               
               return (
-                <SwiperSlide key={project.id} className="py-4">
-                  {/* Outer Project Card Container */}
+                <SwiperSlide key={`project-slide-${project.id}-${index}`} className="py-4">
                   <div 
                     className="bg-slate-900/40 backdrop-blur-xl border border-slate-800/80 rounded-2xl overflow-hidden shadow-2xl flex flex-col h-full hover:border-cyan-400 transition-all duration-500 group project-card-glow"
-                    onMouseEnter={() => handleMouseEnter(project.id, currentMedia.videoUrl)}
-                    onMouseLeave={() => handleMouseLeave(project.id)}
                   >
-                    {/* 1. TOP MEDIA BOX (16:9 Aspect Ratio Container) */}
+                    {/* 1. TOP MEDIA BOX */}
                     <div className="relative aspect-video w-full overflow-hidden bg-[#0a0f1d] border-b border-slate-800/50">
-                      
-                      {/* ==== 移动端项目的排版处理逻辑 (isMobile) ==== */}
                       {project.isMobile ? (
                         <>
-                          {/* 静态图状态：双层模糊画布 */}
                           <div className={`absolute inset-0 w-full h-full transition-opacity duration-500 z-10 ${
                             hoveredProject === project.id && currentMedia.videoUrl ? 'opacity-0' : 'opacity-100'
                           }`}>
-                            {/* 模糊的环境色背景层 */}
                             <img
                               src={currentMedia.thumbnail}
                               alt=""
                               className="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-125 pointer-events-none"
                             />
-                            {/* 中间保持完整比例、未裁剪的原生竖屏图片 */}
                             <img
                               src={currentMedia.thumbnail}
                               alt={`${project.title} responsive viewport`}
@@ -282,12 +272,10 @@ const Projects = () => {
                             />
                           </div>
 
-                          {/* 悬停视频状态：双层模糊环境流媒体 */}
                           {currentMedia.videoUrl && (
                             <div className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${
                               hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
                             }`}>
-                              {/* 背景视频：负责拉伸模糊铺满空间 */}
                               <video
                                 ref={(el) => bgVideoRefs.current[project.id] = el}
                                 src={currentMedia.videoUrl}
@@ -296,7 +284,6 @@ const Projects = () => {
                                 playsInline
                                 className="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-125"
                               />
-                              {/* 前景视频：完整不裁剪的 9:16 演示 */}
                               <video
                                 ref={(el) => videoRefs.current[project.id] = el}
                                 src={currentMedia.videoUrl}
@@ -309,7 +296,6 @@ const Projects = () => {
                           )}
                         </>
                       ) : (
-                        /* ==== 普通横屏项目排版逻辑 (桌面端 Web/游戏) ==== */
                         <>
                           <img
                             src={currentMedia.thumbnail}
@@ -350,8 +336,6 @@ const Projects = () => {
                           ) : null}
                         </>
                       )}
-                      
-                      {/* 精致的阴影压底，提升文本可读性 */}
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent pointer-events-none z-20" />
                     </div>
 
@@ -368,7 +352,11 @@ const Projects = () => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 setActiveEtiTab(idx);
-                                setTimeout(() => handleMouseEnter(project.id, project.mediaTabs[idx].videoUrl), 5);
+                                if (swiperRef.current) {
+                                  setTimeout(() => {
+                                    swiperRef.current.update();
+                                  }, 20);
+                                }
                               }}
                               className={`swiper-no-swiping py-2 px-3 text-[11px] font-mono font-medium rounded-md border tracking-wide text-center transition-all duration-300 ${
                                 isMainHub ? 'col-span-2' : 'col-span-1'
@@ -407,7 +395,7 @@ const Projects = () => {
                           </p>
                         </div>
 
-                        {/* 4. BALANCED MICRO-SCROLL HOUSING */}
+                        {/* 4. MICRO-SCROLL HOUSING */}
                         <div className="relative max-h-[310px] h-auto flex-grow border-t border-slate-800/40 pt-3 mt-auto overflow-hidden w-full">
                           <div 
                             className="max-h-[300px] h-auto overflow-y-auto pr-1 pb-4 space-y-4 custom-hide-scrollbar relative z-20"
@@ -464,7 +452,6 @@ const Projects = () => {
                               </>
                             )}
                           </div>
-
                           <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none z-10"></div>
                         </div>
                       </div>
@@ -502,21 +489,15 @@ const Projects = () => {
             })}
           </Swiper>
 
-          {/* Pagination Indicators */}
+          {/* Pagination Indicators Container */}
           <div className="swiper-custom-pagination flex justify-center gap-2 mt-4"></div>
         </div>
       </div>
 
-      {/* Style overrides for slider synchronization */}
       <style>{`
         .swiper-wrapper {
           display: flex !important;
           align-items: stretch !important;
-        }
-        .swiper-slide {
-          height: auto !important;
-          display: flex !important;
-          flex-direction: column !important;
         }
         .swiper-slide > div {
           width: 100%;
@@ -534,15 +515,26 @@ const Projects = () => {
         }
         
         .swiper-slide {
+          height: auto !important;
+          display: flex !important;
+          flex-direction: column !important;
           opacity: 0.35;
           transform: scale(0.92);
           transition: all 0.5s ease;
-          pointer-events: none;
+          pointer-events: !important;
         }
-        .swiper-slide-active {
-          opacity: 1;
-          transform: scale(1);
+        .swiper-slide-active,
+        .swiper-slide-duplicate-active {
+          opacity: 1 !important;
+          transform: scale(1) !important;
+          pointer-events: auto !important; /* Enable the main wrapper */
+        }
+        .swiper-slide-active a,
+        .swiper-slide-active button,
+        .swiper-slide-duplicate-active a,
+        .swiper-slide-duplicate-active button {
           pointer-events: auto !important;
+          cursor: pointer !important;
         }
         .swiper-slide-active .project-card-glow {
           border-color: rgba(34, 211, 238, 0.25);
@@ -565,6 +557,8 @@ const Projects = () => {
         .swiper-pagination-bullet {
           background: #334155;
           transition: all 0.3s ease;
+          pointer-events: none !important;
+          cursor: default !important;
         }
       `}</style>
     </section>

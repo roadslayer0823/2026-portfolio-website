@@ -41,7 +41,7 @@ const projectAssets = {
   3: {
     // Project ALF: Systems Framework Prototype
     video: null, // NDA restricted
-    thumbnail: null
+    thumbnail: `${baseUrl}thumbnail/project3.png`
   },
   4: {
     // SoulWave AI Voice Sandbox

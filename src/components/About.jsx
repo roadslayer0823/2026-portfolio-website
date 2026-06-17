@@ -1,7 +1,11 @@
 const About = () => {
   // 模拟简历下载，如果是真实文件可以把链接换成绝对或相对路径如 "/resume.pdf"
-  const handleDownloadCV = () => {
+  const handleReviewResume = () => {
     window.open(`${import.meta.env.BASE_URL}pdf/RESUME_LEE KAH HIN.pdf`, '_blank');
+  };
+
+  const handleRecommendationLetter = () => {
+    window.open(`${import.meta.env.BASE_URL}pdf/RECOMMENDATION LETTER_LEE KAH HIN.pdf`, '_blank');
   };
 
   return (
@@ -154,10 +158,12 @@ const About = () => {
         </div>
 
         {/* Download CV Button */}
-        <div className="mt-12 text-center">
+        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+          
+          {/* Button 1: View Resume */}
           <button 
-            onClick={handleDownloadCV}
-            className="px-8 py-3 bg-cyan-400/5 border border-cyan-400/30 text-cyan-400 rounded-lg font-mono text-xs tracking-wider uppercase font-medium hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] transition-all duration-300 transform hover:-translate-y-0.5 flex items-center mx-auto active:scale-95 cursor-pointer"
+            onClick={handleReviewResume}
+            className="w-full sm:w-auto px-8 py-3 bg-cyan-400/5 border border-cyan-400/30 text-cyan-400 rounded-lg font-mono text-xs tracking-wider uppercase font-medium hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center active:scale-95 cursor-pointer"
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -172,6 +178,27 @@ const About = () => {
             </svg>
             View Resume
           </button>
+
+          {/* Button 2: View Recommendation Letter */}
+          <button 
+            onClick={handleRecommendationLetter}
+            className="w-full sm:w-auto px-8 py-3 bg-cyan-400/5 border border-cyan-400/30 text-cyan-400 rounded-lg font-mono text-xs tracking-wider uppercase font-medium hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center active:scale-95 cursor-pointer"
+          >
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              {/* 🌟 细节：帮你把第二个按钮的图标换成了“盾牌/验证/勾选”图标，这样两个按钮放在一起更显高级，不会单调 */}
+              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            Recommendation Letter
+          </button>
+
         </div>
         
       </div>

@@ -1,8 +1,7 @@
 const About = () => {
   // 模拟简历下载，如果是真实文件可以把链接换成绝对或相对路径如 "/resume.pdf"
   const handleDownloadCV = () => {
-    alert("CV download triggered! (Replace with your actual file path)");
-    // window.open('/your-resume-path.pdf', '_blank');
+    window.open(`${import.meta.env.BASE_URL}pdf/RESUME_LEE KAH HIN.pdf`, '_blank');
   };
 
   return (
@@ -155,7 +154,6 @@ const About = () => {
         </div>
 
         {/* Download CV Button */}
-        {/* 🌟 修复：绑定了真正的 onClick 函数，并加上了手势鼠标指针以及微调动画 */}
         <div className="mt-12 text-center">
           <button 
             onClick={handleDownloadCV}
@@ -172,7 +170,7 @@ const About = () => {
             >
               <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
             </svg>
-            Download CV
+            View Resume
           </button>
         </div>
         

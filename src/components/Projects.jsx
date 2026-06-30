@@ -25,6 +25,7 @@ const Projects = () => {
       description: 'A production-grade, micro-frontend educational technology portal orchestrating 4 independent data-centric subsystems under a unified runtime entryway. Powered by a dual-engine Node.js/Express backend resolving localized GenAI streams and tokenized sessions.',
       techStack: ['React & TS', 'Node.js', 'Express', 'DeepSeek API', 'JWT Auth', 'Stream I/O'],
       githubUrl: 'https://github.com/roadslayer0823/Eti-Website',
+      liveDemoUrl: 'https://portal.eti.com.hk/landing/', 
       mediaTabs: [
         {
           name: 'Main Hub',
@@ -80,6 +81,7 @@ const Projects = () => {
       ],
       techStack: ['OpenAI API', 'Prompt Engineering', 'JSON Schema', 'HTML5/CSS3', 'JavaScript'],
       githubUrl: 'https://github.com/roadslayer0823/AI-Storyboard-Generator',
+      liveDemoUrl: 'https://roadslayer0823.github.io/AI-Storyboard-Generator/', 
     },
     {
       id: 3,
@@ -98,6 +100,7 @@ const Projects = () => {
       ],
       techStack: ['Unity', 'C# 8.0+', 'State Machines', 'Observer Pattern', 'Vector Math', 'LeanTween'],
       githubUrl: 'https://github.com/roadslayer0823/Project-ALF-Game-Prototype',
+      liveDemoUrl: null,
     },
     {
       id: 4,
@@ -114,6 +117,7 @@ const Projects = () => {
       ],
       techStack: ['Unity', 'C# 8.0+', 'ElevenLabs API', 'PdfPig', 'DSP Spectrum', 'FFmpeg'],
       githubUrl: 'https://github.com/roadslayer0823/SoulWave-Demo',
+      liveDemoUrl: null, 
     },
     {
       id: 5,
@@ -128,6 +132,7 @@ const Projects = () => {
       ],
       techStack: ['Unity', 'C# OOP', 'ScriptableObjects', 'Addressables Async', 'Newtonsoft.Json', 'WebGL Architecture'],
       githubUrl: 'https://github.com/roadslayer0823/Trading-Card-Game',
+      liveDemoUrl: 'https://play.unity.com/en/games/c5968faf-972f-49f5-a16b-2de19d9da6c8/trading-card-game-tcg-framework',
     },
     {
       id: 6,
@@ -143,6 +148,7 @@ const Projects = () => {
       ],
       techStack: ['Flutter', 'Dart', 'Provider', 'Google Places API', 'fl_chart', 'Asynchronous IO'],
       githubUrl: 'https://github.com/roadslayer0823/travel-planner-app',
+      liveDemoUrl: null, 
     }
   ];
 
@@ -471,7 +477,18 @@ const Projects = () => {
                           </div>
                         </div>
 
-                        <div className="flex gap-3">
+                        <div className={`grid gap-3 ${project.liveDemoUrl ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                          {project.liveDemoUrl && (
+                            <a 
+                              href={project.liveDemoUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="w-full text-center px-4 py-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-lg text-xs font-mono font-medium hover:bg-cyan-500 hover:border-cyan-400 hover:text-slate-950 shadow-[0_0_15px_rgba(34,211,238,0.05)] hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all duration-300 relative z-20 pointer-events-auto"
+                            >
+                              Live Demo 🚀
+                            </a>
+                          )}
+
                           <a 
                             href={project.githubUrl} 
                             target="_blank" 
@@ -521,13 +538,13 @@ const Projects = () => {
           opacity: 0.35;
           transform: scale(0.92);
           transition: all 0.5s ease;
-          pointer-events: !important;
+          pointer-events: none !important;
         }
         .swiper-slide-active,
         .swiper-slide-duplicate-active {
           opacity: 1 !important;
           transform: scale(1) !important;
-          pointer-events: auto !important; /* Enable the main wrapper */
+          pointer-events: auto !important;
         }
         .swiper-slide-active a,
         .swiper-slide-active button,
